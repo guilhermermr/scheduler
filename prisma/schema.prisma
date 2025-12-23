@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Professional {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+
+  slug      String   @unique // usado na URL pública
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relações
+  availabilities Availability[]
+  appointments   Appointment[]
+}
+
+model Availability {
+  id             String   @id @default(uuid())
+  professionalId String
+
+  dayOfWeek Int      // 0 = domingo, 1 = segunda...
+  startTime String   // "09:00"
+  endTime   String   // "18:00"
+
+  professional Professional @relation(fields: [professionalId], references: [id])
+}
+
+model Appointment {
+  id             String   @id @default(uuid())
+  professionalId String
+
+  clientName  String
+  clientPhone String?
+
+  date DateTime
+
+  createdAt DateTime @default(now())
+
+  professional Professional @relation(fields: [professionalId], references: [id])
+}
