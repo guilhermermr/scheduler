@@ -14,10 +14,10 @@ CREATE TABLE "Professional" (
 -- CreateTable
 CREATE TABLE "Availability" (
     "id" TEXT NOT NULL,
-    "professionalId" TEXT NOT NULL,
     "dayOfWeek" INTEGER NOT NULL,
     "startTime" TEXT NOT NULL,
     "endTime" TEXT NOT NULL,
+    "professionalId" TEXT NOT NULL,
 
     CONSTRAINT "Availability_pkey" PRIMARY KEY ("id")
 );
@@ -25,11 +25,8 @@ CREATE TABLE "Availability" (
 -- CreateTable
 CREATE TABLE "Appointment" (
     "id" TEXT NOT NULL,
-    "professionalId" TEXT NOT NULL,
-    "clientName" TEXT NOT NULL,
-    "clientPhone" TEXT,
     "date" TIMESTAMP(3) NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "professionalId" TEXT NOT NULL,
 
     CONSTRAINT "Appointment_pkey" PRIMARY KEY ("id")
 );
