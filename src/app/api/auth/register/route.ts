@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     }, { status: 201 });
 
   } catch (error) {
-    console.error("ERRO NO REGISTRO:", error); // Isso vai mostrar o erro real no terminal
+    console.error("ERRO NO REGISTRO:", error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json({ errors: error.issues }, { status: 400 });
