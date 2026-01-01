@@ -29,8 +29,10 @@ model Availability {
 }
 
 model Appointment {
-  id             String   @id @default(uuid())
+  id             String       @id @default(uuid())
   date           DateTime
+  clientName     String
+  clientEmail    String
   professional   Professional @relation(fields: [professionalId], references: [id])
   professionalId String
 }

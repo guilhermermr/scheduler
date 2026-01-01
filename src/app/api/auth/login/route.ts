@@ -2,10 +2,11 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import * as z from "zod";
+import jwt from "jsonwebtoken";
 
 const loginSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(6)
+  password: z.string().min(6),
 });
 
 export async function POST(request: Request) {
@@ -14,7 +15,7 @@ export async function POST(request: Request) {
     const { email, password } = loginSchema.parse(body);
 
     const user = await prisma.professional.findUnique({
-      where: { email }
+      where: { email },
     });
 
     if (!user) {
@@ -23,34 +24,41 @@ export async function POST(request: Request) {
         { status: 401 }
       );
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    if (!isPasswordValid) {
+    const valid = await bcrypt.compare(password, user.password);
+
+    if (!valid) {
       return NextResponse.json(
         { message: "E-mail ou senha incorretos" },
         { status: 401 }
       );
     }
 
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET!,
+      { expiresIn: "7d" }
+    );
+
     return NextResponse.json({
       message: "Login realizado com sucesso",
+      token,
       user: { 
         id: user.id, 
         name: user.name, 
-        email: user.email,
-        slug: user.slug 
+        email: user.email 
       }
     }, { status: 200 });
-
   } catch (error) {
-    console.error("ERRO NO REGISTRO:", error);
-
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ errors: error.issues }, { status: 400 });
+      return NextResponse.json(
+        { errors: error.issues },
+        { status: 400 }
+      );
     }
 
     return NextResponse.json(
-      { message: "Erro interno no servidor", details: error instanceof Error ? error.message : "Erro desconhecido" }, 
+      { message: "Erro interno no servidor" },
       { status: 500 }
     );
   }
