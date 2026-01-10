@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 
 export async function POST(request: Request) {
   try {
-    // 1. Pega o token do Header (Bearer <token>)
     const authHeader = request.headers.get("authorization");
     const token = authHeader?.split(" ")[1];
 
@@ -12,16 +11,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Não autorizado" }, { status: 401 });
     }
 
-    // 2. Decodifica o token
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
     const professionalId = decoded.id;
 
     const body = await request.json();
-    // Esperamos um array: [{ dayOfWeek: 1, startTime: "08:00", endTime: "12:00" }, ...]
     const { availabilities } = body;
 
-    // 3. Salva no banco vinculando ao ID do profissional logado
-    // Usamos createMany para performance
     await prisma.availability.createMany({
       data: availabilities.map((item: any) => ({
         ...item,

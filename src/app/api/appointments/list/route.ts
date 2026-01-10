@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 
 export async function GET(request: Request) {
   try {
-    // 1. Validação do Token (Apenas o profissional logado acessa)
     const authHeader = request.headers.get("authorization");
     const token = authHeader?.split(" ")[1];
 
@@ -14,13 +13,12 @@ export async function GET(request: Request) {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
 
-    // 2. Busca os agendamentos vinculados ao ID do profissional
     const myAppointments = await prisma.appointment.findMany({
       where: {
         professionalId: decoded.id
       },
       orderBy: {
-        date: 'asc' // Mostra os agendamentos mais próximos primeiro
+        date: 'asc'
       }
     });
 

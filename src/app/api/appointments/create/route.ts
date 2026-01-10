@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     const existingAppointment = await prisma.appointment.findFirst({
       where: {
         professionalId,
-        date: new Date(date), // Converte a string do Postman para objeto Date
+        date: new Date(date),
       },
     });
 

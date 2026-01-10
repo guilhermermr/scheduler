@@ -3,10 +3,10 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ slug: string }> } // 1. Defina params como Promise
+  { params }: { params: Promise<{ slug: string }> } 
 ) {
   try {
-    const { slug } = await params; // 2. Aguarde a resolução da Promise
+    const { slug } = await params;
 
     if (!slug) {
       return NextResponse.json({ message: "Slug não fornecido" }, { status: 400 });
@@ -14,7 +14,7 @@ export async function GET(
 
     const professional = await prisma.professional.findUnique({
       where: { 
-        slug: slug // 3. Agora o slug terá o valor correto da URL
+        slug: slug
       },
       select: {
         id: true,
